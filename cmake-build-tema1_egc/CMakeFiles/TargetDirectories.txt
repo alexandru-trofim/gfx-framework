@@ -1,0 +1,3 @@
+/Users/alexandrutrofim/Documents/development/TEMA1_EGC/gfx-framework/cmake-build-tema1_egc/CMakeFiles/GFXFramework.dir
+/Users/alexandrutrofim/Documents/development/TEMA1_EGC/gfx-framework/cmake-build-tema1_egc/CMakeFiles/edit_cache.dir
+/Users/alexandrutrofim/Documents/development/TEMA1_EGC/gfx-framework/cmake-build-tema1_egc/CMakeFiles/rebuild_cache.dir
