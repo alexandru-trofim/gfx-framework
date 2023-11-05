@@ -43,9 +43,8 @@ void Tema1::Init()
      attacker =  new Attacker("Ceburek", glm::vec3(300, 300, 0), glm::vec3(0,1,1));
      star=  new Star("Ceburek1",  glm::vec3(100, 100, 0), glm::vec3(1,0,1));
     enemy =  new Enemy("Ceburek2",  glm::vec3(300, 200, 0), glm::vec3(0.3,0.5,1));
-    enemy1 =  new Enemy("Ceburek3",  glm::vec3(300, 200, 0.1), glm::vec3(1,0.5,1));
-    enemy1->scale = enemy->scale * 0.7;
-    enemy1->translateToCurr();
+//    enemy1->scale = enemy->scale * 0.7;
+//    enemy1->translateToCurr();
 //    Mesh* square3 = object2D::CreateSquare("square3", corner, squareSide, glm::vec3(0, 0, 1));
 }
 
@@ -67,16 +66,10 @@ void Tema1::Update(float deltaTimeSeconds)
     RenderMesh2D(attacker->getMesh(), shaders["VertexColor"], attacker->getModelMatrix());
     RenderMesh2D(star->mesh, shaders["VertexColor"], star->modelMatrix);
 
-    glm::vec3 newPos = glm::vec3(enemy1->position);
+    glm::vec3 newPos = glm::vec3(enemy->position);
     newPos.x += 320 * deltaTimeSeconds;
-    enemy1->setPosition(newPos);
     enemy->setPosition(newPos);
-    glm::mat3 modelForSmallerHexa = glm::mat3(1);
-    modelMatrix *= transform2D::Translate(enemy1->center.x + enemy1->position.x ,enemy1->center.y + enemy1->position.y);
-    modelMatrix *= transform2D::Scale(enemy1->scale * 0.8f,enemy1->scale * 0.8f);
-    modelMatrix *= transform2D::Translate( -enemy1->center.x - enemy1->position.x ,-enemy1->center.y - enemy1->position.y);
-    RenderMesh2D(enemy1->mesh1, shaders["VertexColor"], enemy1->modelMatrix);
-    RenderMesh2D(enemy->mesh2, shaders["VertexColor"], enemy->modelMatrix);
+    renderEnemy(enemy);
 
 }
 
@@ -134,4 +127,13 @@ void Tema1::OnMouseScroll(int mouseX, int mouseY, int offsetX, int offsetY)
 
 void Tema1::OnWindowResize(int width, int height)
 {
+}
+
+void Tema1::renderEnemy(Enemy* enemy1) {
+    Enemy* secondaryEnemy = new Enemy("Ceburek1232",  enemy1->position, glm::vec3(1,0.5,1));
+    secondaryEnemy->scale = enemy1->scale * 0.7;
+    secondaryEnemy->translateToCurr();
+
+    RenderMesh2D(secondaryEnemy->mesh1, shaders["VertexColor"], secondaryEnemy->modelMatrix);
+    RenderMesh2D(enemy1->mesh1, shaders["VertexColor"], enemy1->modelMatrix);
 }

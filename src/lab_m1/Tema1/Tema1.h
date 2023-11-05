@@ -39,9 +39,10 @@ namespace m1
         Attacker* attacker;
         Star* star;
         Enemy* enemy;
-        Enemy* enemy1;
+
 
         // TODO(student): If you need any other class variables, define them here.
 
+        void renderEnemy(Enemy *enemy1);
     };
 }   // namespace m1

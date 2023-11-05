@@ -21,13 +21,12 @@ Enemy::Enemy(std::string name, glm::vec3 position, glm::vec3 color) {
     scale = 25;
     this->position = position;
     this->color = color;
+    glm::vec3 secondaryColor = glm::vec3(1, 0, 1);
 
     mesh1 = new Mesh(name);
     mesh1->SetDrawMode(GL_TRIANGLES);
-    mesh2 = new Mesh(name);
-    mesh2->SetDrawMode(GL_TRIANGLES);
 
-    std::vector<VertexFormat> vertices =
+    std::vector<VertexFormat> vertices1 =
             {
                     VertexFormat(glm::vec3(2.55f, 4.39f, 0), color),
                     VertexFormat(glm::vec3(1.24f, 2.73f, 0), color),
@@ -36,6 +35,15 @@ Enemy::Enemy(std::string name, glm::vec3 position, glm::vec3 color) {
                     VertexFormat(glm::vec3(5.42f, 2.14f, 0), color),
                     VertexFormat(glm::vec3(4.63f, 4.08f, 0), color),
             };
+//    std::vector<VertexFormat> vertices2 =
+//            {
+//                    VertexFormat(glm::vec3(2.55f, 4.39f, 0.1f), secondaryColor),
+//                    VertexFormat(glm::vec3(1.24f, 2.73f, 0.1f), secondaryColor),
+//                    VertexFormat(glm::vec3(2.05f, 0.76f, 0.1f), secondaryColor),
+//                    VertexFormat(glm::vec3(4.12f, 0.5f, 0.1f), secondaryColor),
+//                    VertexFormat(glm::vec3(5.42f, 2.14f, 0.1f), secondaryColor),
+//                    VertexFormat(glm::vec3(4.63f, 4.08f, 0.1f), secondaryColor),
+//            };
     std::vector<unsigned int> indices = {
             0, 1, 2,
             3, 4, 5,
@@ -43,15 +51,15 @@ Enemy::Enemy(std::string name, glm::vec3 position, glm::vec3 color) {
             2, 5, 0,
     };
 
-    mesh1->InitFromData(vertices, indices);
-    mesh2->InitFromData(vertices, indices);
+    mesh1->InitFromData(vertices1, indices);
+//    mesh2->InitFromData(vertices2, indices);
 
     /*Compute the center of the mesh*/
     center = glm::vec3(0.0f, 0.0f, 0.0f);
-    for (const VertexFormat& vertex : vertices) {
+    for (const VertexFormat& vertex : vertices1) {
         center += vertex.position;
     }
-    center /= static_cast<float>(vertices.size());
+    center /= static_cast<float>(vertices1.size());
 
     this->translateToCurr();
 }
