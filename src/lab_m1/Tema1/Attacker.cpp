@@ -39,7 +39,7 @@ glm::vec3 Attacker::setPosition(glm::vec3 new_position) {
 
 
 Attacker::Attacker(std::string name, glm::vec3 position, glm::vec3 color) {
-    scale = 25;
+    scale = 65;
     this->position = position;
     this->color = color;
 
@@ -48,13 +48,13 @@ Attacker::Attacker(std::string name, glm::vec3 position, glm::vec3 color) {
 
     std::vector<VertexFormat> vertices =
             {
-                    VertexFormat(glm::vec3(1.5f, 2.5f, 0.1), color),
-                    VertexFormat(glm::vec3(1, 1.5f, 0.1), color),
-                    VertexFormat(glm::vec3(1.5f, 0.5f, 0.1), color),
-                    VertexFormat(glm::vec3(1.9f, 1.3f, 0), color),
-                    VertexFormat(glm::vec3(2.8f, 1.3f, 0), color),
-                    VertexFormat(glm::vec3(2.8f, 1.7f, 0), color),
-                    VertexFormat(glm::vec3(1.9f, 1.7f, 0), color)
+                    VertexFormat(glm::vec3(1.5f, 2.5f, 0.1f), color),
+                    VertexFormat(glm::vec3(1, 1.5f, 0.1f), color),
+                    VertexFormat(glm::vec3(1.5f, 0.5f, 0.1f), color),
+                    VertexFormat(glm::vec3(1.9f, 1.3f, 0.1f), color),
+                    VertexFormat(glm::vec3(2.8f, 1.3f, 0.1f), color),
+                    VertexFormat(glm::vec3(2.8f, 1.7f, 0.1f), color),
+                    VertexFormat(glm::vec3(1.9f, 1.7f, 0.1f), color)
             };
     std::vector<unsigned int> indices = {
             1, 6, 0,

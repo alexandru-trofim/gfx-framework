@@ -32,7 +32,7 @@ namespace m1
 
     protected:
         float cx, cy;
-        glm::mat3 modelMatrix;
+//        glm::mat3 modelMatrix;
         float translateX, translateY;
         float scaleX, scaleY;
         float angularStep;
@@ -44,5 +44,7 @@ namespace m1
         // TODO(student): If you need any other class variables, define them here.
 
         void renderEnemy(Enemy *enemy1);
+
+        void renderScene();
     };
 }   // namespace m1
