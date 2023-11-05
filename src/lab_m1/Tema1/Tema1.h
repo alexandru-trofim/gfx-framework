@@ -1,6 +1,9 @@
 #pragma once
 
 #include "components/simple_scene.h"
+#include "Attacker.h"
+#include "Star.h"
+#include "Enemy.h"
 
 
 namespace m1
@@ -33,6 +36,10 @@ namespace m1
         float translateX, translateY;
         float scaleX, scaleY;
         float angularStep;
+        Attacker* attacker;
+        Star* star;
+        Enemy* enemy;
+        Enemy* enemy1;
 
         // TODO(student): If you need any other class variables, define them here.
 

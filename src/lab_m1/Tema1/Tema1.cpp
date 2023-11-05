@@ -1,5 +1,7 @@
 #include "lab_m1/lab3/lab3.h"
 #include "Tema1.h"
+#include "Attacker.h"
+#include "Enemy.h"
 #include <vector>
 #include <iostream>
 
@@ -28,6 +30,7 @@ Tema1::~Tema1()
 
 void Tema1::Init()
 {
+    /* Camera Initialization*/
     glm::ivec2 resolution = window->GetResolution();
     auto camera = GetSceneCamera();
     camera->SetOrthographic(0, (float)resolution.x, 0, (float)resolution.y, 0.01f, 400);
@@ -36,33 +39,14 @@ void Tema1::Init()
     camera->Update();
     GetCameraInput()->SetActive(false);
 
-    glm::vec3 corner = glm::vec3(0, 0, 0);
-    float squareSide = 100;
 
-    // TODO(student): Compute coordinates of a square's center, and store
-    // then in the `cx` and `cy` class variables (see the header). Use
-    // `corner` and `squareSide`. These two class variables will be used
-    // in the `Update()` function. Think about it, why do you need them?
-
-    // Initialize tx and ty (the translation steps)
-    translateX = 0;
-    translateY = 0;
-
-    // Initialize sx and sy (the scale factors)
-    scaleX = 1;
-    scaleY = 1;
-
-    // Initialize angularStep
-    angularStep = 0;
-
-    Mesh* square1 = object2D::CreateSquare("square1", corner, squareSide, glm::vec3(1, 0, 0), true);
-    AddMeshToList(square1);
-
-    Mesh* square2 = object2D::CreateSquare("square2", corner, squareSide, glm::vec3(0, 1, 0));
-    AddMeshToList(square2);
-
-    Mesh* square3 = object2D::CreateSquare("square3", corner, squareSide, glm::vec3(0, 0, 1));
-    AddMeshToList(square3);
+     attacker =  new Attacker("Ceburek", glm::vec3(300, 300, 0), glm::vec3(0,1,1));
+     star=  new Star("Ceburek1",  glm::vec3(100, 100, 0), glm::vec3(1,0,1));
+    enemy =  new Enemy("Ceburek2",  glm::vec3(300, 200, 0), glm::vec3(0.3,0.5,1));
+    enemy1 =  new Enemy("Ceburek3",  glm::vec3(300, 200, 0.1), glm::vec3(1,0.5,1));
+    enemy1->scale = enemy->scale * 0.7;
+    enemy1->translateToCurr();
+//    Mesh* square3 = object2D::CreateSquare("square3", corner, squareSide, glm::vec3(0, 0, 1));
 }
 
 
@@ -80,34 +64,20 @@ void Tema1::FrameStart()
 
 void Tema1::Update(float deltaTimeSeconds)
 {
-    // TODO(student): Update steps for translation, rotation and scale,
-    // in order to create animations. Use the class variables in the
-    // class header, and if you need more of them to complete the task,
-    // add them over there!
+    RenderMesh2D(attacker->getMesh(), shaders["VertexColor"], attacker->getModelMatrix());
+    RenderMesh2D(star->mesh, shaders["VertexColor"], star->modelMatrix);
 
-    modelMatrix = glm::mat3(1);
-    modelMatrix *= transform2D::Translate(150, 250);
-    // TODO(student): Create animations by multiplying the current
-    // transform matrix with the matrices you just implemented.
-    // Remember, the last matrix in the chain will take effect first!
+    glm::vec3 newPos = glm::vec3(enemy1->position);
+    newPos.x += 320 * deltaTimeSeconds;
+    enemy1->setPosition(newPos);
+    enemy->setPosition(newPos);
+    glm::mat3 modelForSmallerHexa = glm::mat3(1);
+    modelMatrix *= transform2D::Translate(enemy1->center.x + enemy1->position.x ,enemy1->center.y + enemy1->position.y);
+    modelMatrix *= transform2D::Scale(enemy1->scale * 0.8f,enemy1->scale * 0.8f);
+    modelMatrix *= transform2D::Translate( -enemy1->center.x - enemy1->position.x ,-enemy1->center.y - enemy1->position.y);
+    RenderMesh2D(enemy1->mesh1, shaders["VertexColor"], enemy1->modelMatrix);
+    RenderMesh2D(enemy->mesh2, shaders["VertexColor"], enemy->modelMatrix);
 
-    RenderMesh2D(meshes["square1"], shaders["VertexColor"], modelMatrix);
-
-    modelMatrix = glm::mat3(1);
-    modelMatrix *= transform2D::Translate(400, 250);
-    // TODO(student): Create animations by multiplying the current
-    // transform matrix with the matrices you just implemented
-    // Remember, the last matrix in the chain will take effect first!
-
-    RenderMesh2D(meshes["square2"], shaders["VertexColor"], modelMatrix);
-
-    modelMatrix = glm::mat3(1);
-    modelMatrix *= transform2D::Translate(650, 250);
-    // TODO(student): Create animations by multiplying the current
-    // transform matrix with the matrices you just implemented
-    // Remember, the last matrix in the chain will take effect first!
-
-    RenderMesh2D(meshes["square3"], shaders["VertexColor"], modelMatrix);
 }
 
 

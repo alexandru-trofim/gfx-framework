@@ -207,7 +207,10 @@
 				18,
 				19,
 				20,
-				21
+				21,
+				22,
+				23,
+				24
 			]
 		}
 	],
@@ -296,13 +299,13 @@
 				1,
 				2,
 				3,
-				22,
-				23,
-				24,
 				25,
 				26,
 				27,
-				28
+				28,
+				29,
+				30,
+				31
 			]
 		},
 		{
@@ -311,8 +314,8 @@
 			[
 				4,
 				14,
-				29,
-				43
+				32,
+				46
 			]
 		},
 		{
@@ -324,14 +327,14 @@
 				7,
 				8,
 				9,
-				30,
-				31,
-				32,
 				33,
 				34,
 				35,
 				36,
-				37
+				37,
+				38,
+				39,
+				40
 			]
 		},
 		{
@@ -339,8 +342,8 @@
 			"sourceIndexes" : 
 			[
 				10,
-				38,
-				39
+				41,
+				42
 			]
 		},
 		{
@@ -350,9 +353,9 @@
 				11,
 				12,
 				13,
-				40,
-				41,
-				42
+				43,
+				44,
+				45
 			]
 		},
 		{
@@ -360,48 +363,54 @@
 			"sourceIndexes" : 
 			[
 				15,
-				44
+				16,
+				17,
+				18,
+				47,
+				48,
+				49,
+				50
 			]
 		},
 		{
 			"name" : "src\\lab_m1\\lab3",
 			"sourceIndexes" : 
 			[
-				16,
-				17,
-				18,
-				45,
-				46,
-				47,
-				48
+				19,
+				20,
+				21,
+				51,
+				52,
+				53,
+				54
 			]
 		},
 		{
 			"name" : "src",
 			"sourceIndexes" : 
 			[
-				19
+				22
 			]
 		},
 		{
 			"name" : "src\\utils",
 			"sourceIndexes" : 
 			[
-				20,
-				21,
-				50,
-				51,
-				52,
-				53,
-				54,
-				55
+				23,
+				24,
+				56,
+				57,
+				58,
+				59,
+				60,
+				61
 			]
 		},
 		{
 			"name" : "src\\lab_m1",
 			"sourceIndexes" : 
 			[
-				49
+				55
 			]
 		}
 	],
@@ -496,6 +505,24 @@
 			"compileGroupIndex" : 0,
 			"path" : "src/core/world.cpp",
 			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 2,
+			"compileGroupIndex" : 0,
+			"path" : "src/lab_m1/Tema1/Attacker.cpp",
+			"sourceGroupIndex" : 5
+		},
+		{
+			"backtrace" : 2,
+			"compileGroupIndex" : 0,
+			"path" : "src/lab_m1/Tema1/Enemy.cpp",
+			"sourceGroupIndex" : 5
+		},
+		{
+			"backtrace" : 2,
+			"compileGroupIndex" : 0,
+			"path" : "src/lab_m1/Tema1/Star.cpp",
+			"sourceGroupIndex" : 5
 		},
 		{
 			"backtrace" : 2,
@@ -648,6 +675,21 @@
 			"backtrace" : 2,
 			"path" : "src/core/world.h",
 			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 2,
+			"path" : "src/lab_m1/Tema1/Attacker.h",
+			"sourceGroupIndex" : 5
+		},
+		{
+			"backtrace" : 2,
+			"path" : "src/lab_m1/Tema1/Enemy.h",
+			"sourceGroupIndex" : 5
+		},
+		{
+			"backtrace" : 2,
+			"path" : "src/lab_m1/Tema1/Star.h",
+			"sourceGroupIndex" : 5
 		},
 		{
 			"backtrace" : 2,
