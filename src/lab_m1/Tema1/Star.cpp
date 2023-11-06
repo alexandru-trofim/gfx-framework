@@ -7,7 +7,7 @@
 
 
 float Star::setScale(float new_scale) {
-    scale = new_scale;
+    scale = new_scale * scale;
     translateToCurr();
 }
 glm::vec3 Star::setPosition(glm::vec3 new_position) {
@@ -16,7 +16,7 @@ glm::vec3 Star::setPosition(glm::vec3 new_position) {
 }
 
 Star::Star(std::string name, glm::vec3 position, glm::vec3 color) {
-    scale = 25;
+    scale = 10;
     this->position = position;
     this->color = color;
 
@@ -66,4 +66,11 @@ void Star::translateToCurr() {
     modelMatrix *= transform2D::Translate(- center.x - position.x,  - center.y - position.y);
     //translate
     modelMatrix *= transform2D::Translate(position.x,   position.y);
+}
+
+Mesh* Star::getMesh() {
+    return mesh;
+}
+glm::mat3 Star::getModelMatrix() {
+    return modelMatrix;
 }

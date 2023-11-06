@@ -2,43 +2,43 @@
 // Created by Alexandru Trofim on 03.11.2023.
 //
 
-#include "Attacker.h"
+#include "Hero.h"
 #include "lab_m1/lab3/transform2D.h"
 
-Attacker::Attacker() {
+Hero::Hero() {
 }
-Attacker::~Attacker() {
+Hero::~Hero() {
 }
 
 /*Getters*/
-Mesh* Attacker::getMesh() {
+Mesh* Hero::getMesh() {
    return mesh;
 }
-glm::vec3 Attacker::getPosition() {
+glm::vec3 Hero::getPosition() {
     return position;
 }
-glm::vec3 Attacker::getCenter() {
+glm::vec3 Hero::getCenter() {
     return center;
 }
-glm::mat3 Attacker::getModelMatrix() {
+glm::mat3 Hero::getModelMatrix() {
     return modelMatrix;
 }
-float Attacker::getScale() {
+float Hero::getScale() {
     return scale;
 }
 
 /*Setters*/
-float Attacker::setScale(float new_scale) {
+float Hero::setScale(float new_scale) {
     scale = new_scale * scale;
     translateToCurr();
 }
-glm::vec3 Attacker::setPosition(glm::vec3 new_position) {
+glm::vec3 Hero::setPosition(glm::vec3 new_position) {
     position = glm::vec3(new_position);
     translateToCurr();
 }
 
 
-Attacker::Attacker(std::string name, glm::vec3 position, glm::vec3 color) {
+Hero::Hero(std::string name, glm::vec3 position, glm::vec3 color) {
     scale = 65;
     this->position = position;
     this->color = color;
@@ -76,7 +76,7 @@ Attacker::Attacker(std::string name, glm::vec3 position, glm::vec3 color) {
     this->translateToCurr();
 }
 
-void Attacker::translateToCurr() {
+void Hero::translateToCurr() {
     modelMatrix = glm::mat3(1);
     //scale
     modelMatrix *= transform2D::Translate(center.x +  position.x ,center.y + position.y);

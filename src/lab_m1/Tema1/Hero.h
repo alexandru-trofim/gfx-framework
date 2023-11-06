@@ -2,17 +2,17 @@
 // Created by Alexandru Trofim on 03.11.2023.
 //
 
-#ifndef GFXFRAMEWORK_ATTACKER_H
-#define GFXFRAMEWORK_ATTACKER_H
+#ifndef GFXFRAMEWORK_HERO_H
+#define GFXFRAMEWORK_HERO_H
 
 #include "core/gpu/mesh.h"
 
-class Attacker {
+class Hero {
 
 public:
-    Attacker();
-    Attacker(std::string name, glm::vec3 position, glm::vec3 color);
-    ~Attacker();
+    Hero();
+    Hero(std::string name, glm::vec3 position, glm::vec3 color);
+    ~Hero();
 
     void translateToCurr();
 
@@ -38,4 +38,4 @@ protected:
 
 };
 
-#endif //GFXFRAMEWORK_ATTACKER_H
+#endif //GFXFRAMEWORK_HERO_H

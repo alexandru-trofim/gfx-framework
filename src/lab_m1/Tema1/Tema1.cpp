@@ -1,7 +1,8 @@
 #include "lab_m1/lab3/lab3.h"
 #include "Tema1.h"
-#include "Attacker.h"
+#include "Hero.h"
 #include "Enemy.h"
+#include "Heart.h"
 #include <vector>
 #include <iostream>
 
@@ -31,6 +32,8 @@ Tema1::~Tema1()
 void Tema1::Init()
 {
     /* Camera Initialization*/
+    nrOfLives = 5;
+    nrOfStars = 8;
     glm::ivec2 resolution = window->GetResolution();
     auto camera = GetSceneCamera();
     camera->SetOrthographic(0, (float)resolution.x, 0, (float)resolution.y, 0.01f, 400);
@@ -40,9 +43,6 @@ void Tema1::Init()
     GetCameraInput()->SetActive(false);
 
 
-     attacker =  new Attacker("Ceburek", glm::vec3(300, 300, 0), glm::vec3(0,1,1));
-     star=  new Star("Ceburek1",  glm::vec3(100, 100, 0), glm::vec3(1,0,1));
-    enemy =  new Enemy("Ceburek2",  glm::vec3(300, 200, 0), glm::vec3(0.3,0.5,1));
 //    enemy1->scale = enemy->scale * 0.7;
 //    enemy1->translateToCurr();
 //    Mesh* square3 = object2D::CreateSquare("square3", corner, squareSide, glm::vec3(0, 0, 1));
@@ -68,10 +68,30 @@ void Tema1::Update(float deltaTimeSeconds)
 //    RenderMesh2D(attacker->getMesh(), shaders["VertexColor"], attacker->getModelMatrix());
 //    RenderMesh2D(star->mesh, shaders["VertexColor"], star->modelMatrix);
 //
-    glm::vec3 newPos = glm::vec3(enemy->position);
-    newPos.x += 100 * deltaTimeSeconds;
-    enemy->setPosition(newPos);
-    renderEnemy(enemy);
+//    glm::vec3 newPos = glm::vec3(enemy->position);
+//    newPos.x += 100 * deltaTimeSeconds;
+//    enemy->setPosition(newPos);
+//    renderEnemy(enemy);
+
+    /*Draw the hearts*/
+    Heart* heart = new Heart("heart", glm::vec3(500, 500, 0), glm::vec3(1, 0, 0));
+    heart->setScale(4.8f);
+    heart->translateToCurr();
+    for (int i = 0; i < nrOfLives; ++i) {
+        glm::vec3 pos = glm::vec3(660 + i * 100, 670, 0);
+        heart->setPosition(pos);
+        RenderMesh2D(heart->getMesh(), shaders["VertexColor"], heart->getModelMatrix());
+    }
+
+    /*Draw the stars*/
+    Star* star= new Star("star", glm::vec3(500, 500, 0), glm::vec3(0.61f, 0.61f, 0.61f));
+    star->setScale(1.4f);
+    star->translateToCurr();
+    for (int i = 0; i < nrOfStars; ++i) {
+        glm::vec3 pos = glm::vec3(640 + i * 50, 580, 0);
+        star->setPosition(pos);
+        RenderMesh2D(star->getMesh(), shaders["VertexColor"], star->getModelMatrix());
+    }
 
 }
 
@@ -193,14 +213,16 @@ void Tema1::renderScene() {
 
     translateX = 30;
     translateY = 570;
-    vector<Attacker*> heroes;
-    Attacker* hero = new Attacker("attacker1", glm::vec3(30, 570,0.2), glm::vec3(0.259f, 0.839f, 0.643f));
+    Star* star = new Star("attacker1", glm::vec3(30, 570, 0.2), glm::vec3(0.61f, 0.61f, 0.61f));
+    star->setScale(0.8f);
+    vector<Hero*> heroes;
+    Hero* hero = new Hero("attacker1", glm::vec3(30, 570, 0.2), glm::vec3(0.259f, 0.839f, 0.643f));
     heroes.push_back(hero);
-    hero = new Attacker("attacker2", glm::vec3(30, 570,0.2), glm::vec3(0.973f, 0.953f, 0.553f));
+    hero = new Hero("attacker2", glm::vec3(30, 570, 0.2), glm::vec3(0.973f, 0.953f, 0.553f));
     heroes.push_back(hero);
-    hero = new Attacker("attacker3", glm::vec3(30, 570,0.2), glm::vec3(1, 0.706f, 0.502f));
+    hero = new Hero("attacker3", glm::vec3(30, 570, 0.2), glm::vec3(1, 0.706f, 0.502f));
     heroes.push_back(hero);
-    hero = new Attacker("attacker4", glm::vec3(30, 570,0.2), glm::vec3(0.78f, 0.502f, 0.91f));
+    hero = new Hero("attacker4", glm::vec3(30, 570, 0.2), glm::vec3(0.78f, 0.502f, 0.91f));
     heroes.push_back(hero);
 
     for(int i = 0; i < 4; ++i) {
@@ -215,6 +237,16 @@ void Tema1::renderScene() {
         heroes[i]->setScale(0.8f);
         heroes[i]->translateToCurr();
         RenderMesh2D(heroes[i]->getMesh(), shaders["VertexColor"], heroes[i]->getModelMatrix());
+
+
+        /*price of each hero*/
+        float posX = 38 + i * 150;
+        float posY = 550;
+        for (int j = 0; j < i + 1; j++) {
+            glm::vec3 pos = glm::vec3(posX + j * 30, posY, 0);
+            star->setPosition(pos);
+            RenderMesh2D(star->getMesh(), shaders["VertexColor"], star->getModelMatrix());
+        }
         translateX += 150;
     }
 

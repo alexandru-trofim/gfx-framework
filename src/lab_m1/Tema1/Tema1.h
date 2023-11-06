@@ -1,7 +1,7 @@
 #pragma once
 
 #include "components/simple_scene.h"
-#include "Attacker.h"
+#include "Hero.h"
 #include "Star.h"
 #include "Enemy.h"
 
@@ -32,13 +32,10 @@ namespace m1
 
     protected:
         float cx, cy;
-//        glm::mat3 modelMatrix;
         float translateX, translateY;
-        float scaleX, scaleY;
-        float angularStep;
-        Attacker* attacker;
-        Star* star;
         Enemy* enemy;
+        int nrOfLives;
+        int nrOfStars;
 
 
         // TODO(student): If you need any other class variables, define them here.

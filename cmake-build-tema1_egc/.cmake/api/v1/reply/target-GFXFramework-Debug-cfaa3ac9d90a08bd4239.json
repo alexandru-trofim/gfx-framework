@@ -210,7 +210,8 @@
 				21,
 				22,
 				23,
-				24
+				24,
+				25
 			]
 		}
 	],
@@ -299,13 +300,13 @@
 				1,
 				2,
 				3,
-				25,
 				26,
 				27,
 				28,
 				29,
 				30,
-				31
+				31,
+				32
 			]
 		},
 		{
@@ -314,8 +315,8 @@
 			[
 				4,
 				14,
-				32,
-				46
+				33,
+				47
 			]
 		},
 		{
@@ -327,14 +328,14 @@
 				7,
 				8,
 				9,
-				33,
 				34,
 				35,
 				36,
 				37,
 				38,
 				39,
-				40
+				40,
+				41
 			]
 		},
 		{
@@ -342,8 +343,8 @@
 			"sourceIndexes" : 
 			[
 				10,
-				41,
-				42
+				42,
+				43
 			]
 		},
 		{
@@ -353,9 +354,9 @@
 				11,
 				12,
 				13,
-				43,
 				44,
-				45
+				45,
+				46
 			]
 		},
 		{
@@ -366,51 +367,53 @@
 				16,
 				17,
 				18,
-				47,
+				19,
 				48,
 				49,
-				50
+				50,
+				51,
+				52
 			]
 		},
 		{
 			"name" : "src\\lab_m1\\lab3",
 			"sourceIndexes" : 
 			[
-				19,
 				20,
 				21,
-				51,
-				52,
+				22,
 				53,
-				54
+				54,
+				55,
+				56
 			]
 		},
 		{
 			"name" : "src",
 			"sourceIndexes" : 
 			[
-				22
+				23
 			]
 		},
 		{
 			"name" : "src\\utils",
 			"sourceIndexes" : 
 			[
-				23,
 				24,
-				56,
-				57,
+				25,
 				58,
 				59,
 				60,
-				61
+				61,
+				62,
+				63
 			]
 		},
 		{
 			"name" : "src\\lab_m1",
 			"sourceIndexes" : 
 			[
-				55
+				57
 			]
 		}
 	],
@@ -509,13 +512,19 @@
 		{
 			"backtrace" : 2,
 			"compileGroupIndex" : 0,
-			"path" : "src/lab_m1/Tema1/Attacker.cpp",
+			"path" : "src/lab_m1/Tema1/Enemy.cpp",
 			"sourceGroupIndex" : 5
 		},
 		{
 			"backtrace" : 2,
 			"compileGroupIndex" : 0,
-			"path" : "src/lab_m1/Tema1/Enemy.cpp",
+			"path" : "src/lab_m1/Tema1/Heart.cpp",
+			"sourceGroupIndex" : 5
+		},
+		{
+			"backtrace" : 2,
+			"compileGroupIndex" : 0,
+			"path" : "src/lab_m1/Tema1/Hero.cpp",
 			"sourceGroupIndex" : 5
 		},
 		{
@@ -678,12 +687,17 @@
 		},
 		{
 			"backtrace" : 2,
-			"path" : "src/lab_m1/Tema1/Attacker.h",
+			"path" : "src/lab_m1/Tema1/Enemy.h",
 			"sourceGroupIndex" : 5
 		},
 		{
 			"backtrace" : 2,
-			"path" : "src/lab_m1/Tema1/Enemy.h",
+			"path" : "src/lab_m1/Tema1/Heart.h",
+			"sourceGroupIndex" : 5
+		},
+		{
+			"backtrace" : 2,
+			"path" : "src/lab_m1/Tema1/Hero.h",
 			"sourceGroupIndex" : 5
 		},
 		{
