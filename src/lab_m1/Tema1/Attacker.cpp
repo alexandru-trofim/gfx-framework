@@ -29,7 +29,7 @@ float Attacker::getScale() {
 
 /*Setters*/
 float Attacker::setScale(float new_scale) {
-    scale = new_scale;
+    scale = new_scale * scale;
     translateToCurr();
 }
 glm::vec3 Attacker::setPosition(glm::vec3 new_position) {

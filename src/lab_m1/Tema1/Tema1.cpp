@@ -68,10 +68,10 @@ void Tema1::Update(float deltaTimeSeconds)
 //    RenderMesh2D(attacker->getMesh(), shaders["VertexColor"], attacker->getModelMatrix());
 //    RenderMesh2D(star->mesh, shaders["VertexColor"], star->modelMatrix);
 //
-//    glm::vec3 newPos = glm::vec3(enemy->position);
-//    newPos.x += 320 * deltaTimeSeconds;
-//    enemy->setPosition(newPos);
-//    renderEnemy(enemy);
+    glm::vec3 newPos = glm::vec3(enemy->position);
+    newPos.x += 100 * deltaTimeSeconds;
+    enemy->setPosition(newPos);
+    renderEnemy(enemy);
 
 }
 
@@ -153,6 +153,7 @@ void Tema1::renderScene() {
                                           glm::vec3(0.031f, 0.792f, 0.82f),
                                           true
                                           );
+
     translateX = 70;
     translateY = paddingBottom;
     for (int i = 0; i < 3; ++i) {
@@ -177,11 +178,44 @@ void Tema1::renderScene() {
                                           true
     );
     glm::mat3 modelMatrix = glm::mat3(1);
-
     modelMatrix *= transform2D::Translate(15, paddingBottom);
-    //scale
     modelMatrix *= transform2D::Scale(1.5f , 16.8f);
-
     RenderMesh2D(square, shaders["VertexColor"], modelMatrix);
+
+    /*Draw top menu bar*/
+    length = 120;
+    square = object2D::CreateSquare("square_for_scene",
+                                          glm::vec3(0, 0, 0),
+                                          length,
+                                          glm::vec3(0.62f, 0.62f, 0.62f),
+                                          false
+    );
+
+    translateX = 30;
+    translateY = 570;
+    vector<Attacker*> heroes;
+    Attacker* hero = new Attacker("attacker1", glm::vec3(30, 570,0.2), glm::vec3(0.259f, 0.839f, 0.643f));
+    heroes.push_back(hero);
+    hero = new Attacker("attacker2", glm::vec3(30, 570,0.2), glm::vec3(0.973f, 0.953f, 0.553f));
+    heroes.push_back(hero);
+    hero = new Attacker("attacker3", glm::vec3(30, 570,0.2), glm::vec3(1, 0.706f, 0.502f));
+    heroes.push_back(hero);
+    hero = new Attacker("attacker4", glm::vec3(30, 570,0.2), glm::vec3(0.78f, 0.502f, 0.91f));
+    heroes.push_back(hero);
+
+    for(int i = 0; i < 4; ++i) {
+        //Add square
+        modelMatrix = glm::mat3(1);
+        modelMatrix *= transform2D::Translate(translateX, translateY);
+        RenderMesh2D(square, shaders["VertexColor"], modelMatrix);
+        modelMatrix = glm::mat3(1);
+        modelMatrix *= transform2D::Translate(translateX + length / 2, translateY + length / 2);
+        glm::vec3 newPos = glm::vec3(translateX + length / 2, translateY + length / 2, 0);
+        heroes[i]->setPosition(newPos);
+        heroes[i]->setScale(0.8f);
+        heroes[i]->translateToCurr();
+        RenderMesh2D(heroes[i]->getMesh(), shaders["VertexColor"], heroes[i]->getModelMatrix());
+        translateX += 150;
+    }
 
 }
