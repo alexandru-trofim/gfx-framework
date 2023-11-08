@@ -12,6 +12,7 @@ class Hero {
 public:
     Hero();
     Hero(std::string name, glm::vec3 position, glm::vec3 color);
+    Hero(std::string name, glm::vec3 position, int type);
     ~Hero();
 
     void translateToCurr();
@@ -31,11 +32,13 @@ private:
     glm::vec3 center;
     glm::vec3 position;
     float scale;
+    int type;
 
 protected:
     int price;
     glm::vec3 color;
 
+    void setColorFromType();
 };
 
 #endif //GFXFRAMEWORK_HERO_H

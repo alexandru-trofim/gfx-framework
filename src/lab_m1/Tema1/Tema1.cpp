@@ -34,6 +34,15 @@ void Tema1::Init()
     /* Camera Initialization*/
     nrOfLives = 5;
     nrOfStars = 8;
+    buingNow = 0;
+    newHero = nullptr;
+    // Initialize all elements to nullptr
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            heroesMatrix[i][j] = nullptr;
+        }
+    }
+
     glm::ivec2 resolution = window->GetResolution();
     auto camera = GetSceneCamera();
     camera->SetOrthographic(0, (float)resolution.x, 0, (float)resolution.y, 0.01f, 400);
@@ -93,6 +102,22 @@ void Tema1::Update(float deltaTimeSeconds)
         RenderMesh2D(star->getMesh(), shaders["VertexColor"], star->getModelMatrix());
     }
 
+    //Print the newHero which is created but not placed yet
+    if (newHero != nullptr) {
+        newHero->setPosition(glm::vec3(my_mouseX, my_mouseY, 0));
+        newHero->translateToCurr();
+        RenderMesh2D(newHero->getMesh(), shaders["VertexColor"], newHero->getModelMatrix());
+    }
+
+    //Draw all the heroes from the table
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            if (heroesMatrix[i][j] != nullptr) {
+                RenderMesh2D(heroesMatrix[i][j]->getMesh(), shaders["VertexColor"], heroesMatrix[i][j]->getModelMatrix());
+            }
+        }
+    }
+
 }
 
 
@@ -126,19 +151,74 @@ void Tema1::OnKeyRelease(int key, int mods)
 
 void Tema1::OnMouseMove(int mouseX, int mouseY, int deltaX, int deltaY)
 {
+    my_mouseX= mouseX;
+    my_mouseY=  720 - mouseY;
     // Add mouse move event
+//    if(buingNow == 1 ) {
+//        cout << "am intrat in al doilea if" << endl;
+//       newHero->setPosition(glm::vec3(mouseX, 50, 0));
+//       newHero->translateToCurr();
+//        RenderMesh2D(newHero->getMesh(), shaders["VertexColor"], newHero->getModelMatrix());
+//    }
+
 }
 
 
 void Tema1::OnMouseBtnPress(int mouseX, int mouseY, int button, int mods)
 {
-    // Add mouse button press event
+    my_mouseX = mouseX;
+    my_mouseY =  720 - mouseY;
+
+    if (buingNow == 0 && button == 1) {
+        int x = 30, y = 570;
+        for (int i = 0; i < 4; ++i) {
+            int square_x = x + 150 * i;
+            if (my_mouseX >= square_x && my_mouseX <= square_x + 120
+                    && my_mouseY >= y && my_mouseY <= y + 120) {
+                cout << "new hero should be of type " << i << endl;
+                newHero = new Hero("new_hero", glm::vec3(my_mouseX, my_mouseY, 0), i);
+                buingNow = 1;
+            }
+
+        }
+    }
+
 }
 
 
 void Tema1::OnMouseBtnRelease(int mouseX, int mouseY, int button, int mods)
 {
     // Add mouse button release event
+    if (button == 1) {
+        int heroPlaced = 0;
+        cout << "button release" << endl;
+        //here we will check if the new hero is situated on a square
+        int x = 70, y = 40;
+        for(int i = 0; i < 3; i++) {
+            x = 70;
+            for (int j = 0; j < 3; j++) {
+                //Check if our mouse is within the range o a square
+                if (mouseX >= x && mouseX <= x + 120 && (720 - mouseY) >= y && (720 - mouseY) <= y + 120) {
+                    //check if our square is free
+                    if (heroesMatrix[i][j] == nullptr) {
+                       heroesMatrix[i][j] = newHero;
+                       newHero->setPosition(glm::vec3(x + 120 / 2, y + 120 / 2, 0));
+                       newHero->translateToCurr();
+                       heroPlaced = 1;
+
+                    }
+              }
+               x += 150;
+            }
+            y += 150;
+        }
+        //if not on a square then
+        if (!heroPlaced) {
+            delete newHero;
+        }
+        newHero = nullptr;
+        buingNow = 0;
+    }
 }
 
 
@@ -211,6 +291,7 @@ void Tema1::renderScene() {
                                           false
     );
 
+    /*Draw buy section*/
     translateX = 30;
     translateY = 570;
     Star* star = new Star("attacker1", glm::vec3(30, 570, 0.2), glm::vec3(0.61f, 0.61f, 0.61f));
@@ -232,14 +313,15 @@ void Tema1::renderScene() {
         RenderMesh2D(square, shaders["VertexColor"], modelMatrix);
         modelMatrix = glm::mat3(1);
         modelMatrix *= transform2D::Translate(translateX + length / 2, translateY + length / 2);
+
+        /*Draw heroes*/
         glm::vec3 newPos = glm::vec3(translateX + length / 2, translateY + length / 2, 0);
         heroes[i]->setPosition(newPos);
         heroes[i]->setScale(0.8f);
         heroes[i]->translateToCurr();
         RenderMesh2D(heroes[i]->getMesh(), shaders["VertexColor"], heroes[i]->getModelMatrix());
 
-
-        /*price of each hero*/
+        /*Draw price of each hero*/
         float posX = 38 + i * 150;
         float posY = 550;
         for (int j = 0; j < i + 1; j++) {

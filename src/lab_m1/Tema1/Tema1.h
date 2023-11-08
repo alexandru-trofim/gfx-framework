@@ -36,6 +36,11 @@ namespace m1
         Enemy* enemy;
         int nrOfLives;
         int nrOfStars;
+        int buingNow;
+        Hero* newHero;
+        float my_mouseX = 0;
+        float my_mouseY = 0;
+        Hero* heroesMatrix[3][3];
 
 
         // TODO(student): If you need any other class variables, define them here.
