@@ -26,6 +26,8 @@ public:
     float setScale(float scale);
     glm::mat3 getModelMatrix();
 
+    int getType();
+
 private:
     Mesh* mesh;
     glm::mat3 modelMatrix;
@@ -39,6 +41,7 @@ protected:
     glm::vec3 color;
 
     void setColorFromType();
+
 };
 
 #endif //GFXFRAMEWORK_HERO_H

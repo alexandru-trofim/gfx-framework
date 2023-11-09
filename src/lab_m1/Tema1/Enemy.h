@@ -16,6 +16,8 @@ public:
 
     Enemy(std::string name, glm::vec3 position, glm::vec3 color);
 
+    Enemy(std::string name, glm::vec3 position, int type);
+
     ~Enemy();
 
 
@@ -28,15 +30,17 @@ public:
     glm::vec3 color;
     glm::vec3 position;
     float scale;
+    int type;
 
     void translateToCurr();
 
-    float setScale(float new_scale);
+    void setScale(float new_scale);
 
-    glm::vec3 setPosition(glm::vec3 new_position);
+    void setPosition(glm::vec3 new_position);
 
     void render(Shader *shader);
 
+    void setColorFromType();
 };
 
 

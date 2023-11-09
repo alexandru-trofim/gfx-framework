@@ -17,10 +17,13 @@ public:
 
     Star(std::string name, glm::vec3 position, glm::vec3 color);
 
+    Star(std::string name, glm::vec3 position, int type);
+
     ~Star();
 
     Mesh* mesh;
     glm::mat3 modelMatrix;
+    int type;
     glm::vec3 setPosition(glm::vec3 new_position);
     Mesh *getMesh();
     void translateToCurr();
@@ -29,13 +32,22 @@ public:
     glm::mat3 getModelMatrix();
     float setScale(float new_scale);
 
+    glm::vec3 getCenter();
+
+    float getRadius();
+
+    glm::vec3 getPosition();
+
 private:
     glm::vec3 center;
     glm::vec3 color;
     glm::vec3 position;
+    float radius;
     float scale;
+    int type;
 
 
+    void setColorFromType();
 };
 
 

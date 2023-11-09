@@ -26,6 +26,9 @@ glm::mat3 Hero::getModelMatrix() {
 float Hero::getScale() {
     return scale;
 }
+int Hero::getType() {
+    return type;
+}
 
 /*Setters*/
 float Hero::setScale(float new_scale) {
@@ -118,12 +121,18 @@ Hero::Hero(std::string name, glm::vec3 position, int type) {
 
 void Hero::translateToCurr() {
     modelMatrix = glm::mat3(1);
-    //scale
-    modelMatrix *= transform2D::Translate(center.x +  position.x ,center.y + position.y);
-    modelMatrix *= transform2D::Scale(scale, scale);
-    modelMatrix *= transform2D::Translate(- center.x - position.x,  - center.y - position.y);
+//    //scale
+//    modelMatrix *= transform2D::Translate(center.x +  position.x ,center.y + position.y);
+//    modelMatrix *= transform2D::Scale(scale, scale);
+//    modelMatrix *= transform2D::Translate(- center.x - position.x,  - center.y - position.y);
+//    //translate
+//    modelMatrix *= transform2D::Translate(position.x,   position.y);
     //translate
     modelMatrix *= transform2D::Translate(position.x,   position.y);
+    //scale
+    modelMatrix *= transform2D::Translate(center.x  ,center.y );
+    modelMatrix *= transform2D::Scale(scale, scale);
+    modelMatrix *= transform2D::Translate(- center.x ,  - center.y );
 }
 
 void Hero::setColorFromType() {

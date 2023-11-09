@@ -4,6 +4,7 @@
 #include "Hero.h"
 #include "Star.h"
 #include "Enemy.h"
+#include "Heart.h"
 
 
 namespace m1
@@ -31,22 +32,45 @@ namespace m1
         void OnWindowResize(int width, int height) override;
 
     protected:
-        float cx, cy;
         float translateX, translateY;
-        Enemy* enemy;
-        int nrOfLives;
-        int nrOfStars;
-        int buingNow;
-        Hero* newHero;
         float my_mouseX = 0;
         float my_mouseY = 0;
+
+        int nrOfLives;
+        int nrOfStars;
+
+        int buingNow;
+
+        float starSpawnTime;
+        float MinStarSpawnTime = 0;
+        float MaxStarSpawnTime = 0;
+
+        float enemySpawnTime;
+        float MinEnemySpawnTime = 0;
+        float MaxEnemySpawnTime = 0;
+
         Hero* heroesMatrix[3][3];
+        Hero* newHero;
+        std::vector<Star*> spawnedStars;
+        std::vector<Enemy*> spawnedEnemies[3];
+        Star* starForPrice;
+        Mesh* squareForScene;
+        Mesh* squareForFinish;
+        Mesh* squareForMenuBar;
+        Heart* heart;
+        Star* star;
+        std::vector<Hero*> heroesForMenuBar;
 
 
         // TODO(student): If you need any other class variables, define them here.
 
         void renderEnemy(Enemy *enemy1);
-
         void renderScene();
+        void setNrOfStars(int nrOfStars);
+        int getNrOfStars();
+
+        float getRandomFloatInRange(float min, float max);
+
+        int getRandomIntInRange(int min, int max);
     };
 }   // namespace m1

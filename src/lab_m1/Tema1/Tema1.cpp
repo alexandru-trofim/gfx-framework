@@ -31,18 +31,23 @@ Tema1::~Tema1()
 
 void Tema1::Init()
 {
-    /* Camera Initialization*/
+    MinStarSpawnTime = 5;
+    MaxStarSpawnTime = 10;
+    MinEnemySpawnTime = 5;
+    MaxEnemySpawnTime = 10;
     nrOfLives = 5;
     nrOfStars = 8;
     buingNow = 0;
     newHero = nullptr;
-    // Initialize all elements to nullptr
+//    testStar = nullptr;
+    /* Initialize all elements to nullptr */
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
             heroesMatrix[i][j] = nullptr;
         }
     }
 
+    /* Camera Initialization*/
     glm::ivec2 resolution = window->GetResolution();
     auto camera = GetSceneCamera();
     camera->SetOrthographic(0, (float)resolution.x, 0, (float)resolution.y, 0.01f, 400);
@@ -51,10 +56,49 @@ void Tema1::Init()
     camera->Update();
     GetCameraInput()->SetActive(false);
 
+    /* Seed for random */
+    srand (static_cast <unsigned> (time(0)));
 
-//    enemy1->scale = enemy->scale * 0.7;
-//    enemy1->translateToCurr();
-//    Mesh* square3 = object2D::CreateSquare("square3", corner, squareSide, glm::vec3(0, 0, 1));
+    /* Get spawn time for Star and Enemy*/
+    starSpawnTime = getRandomFloatInRange(MinStarSpawnTime, MaxStarSpawnTime);
+    enemySpawnTime = getRandomFloatInRange(MinEnemySpawnTime, MaxEnemySpawnTime);
+
+    /*Create square for tiles*/
+    squareForScene = object2D::CreateSquare("square_for_scene",
+                                          glm::vec3(0, 0, 0),
+                                          120,
+                                          glm::vec3(0.031f, 0.792f, 0.82f),
+                                          true
+    );
+    squareForFinish = object2D::CreateSquare("square_for_scene",
+                                    glm::vec3(0, 0, 0),
+                                    25,
+                                    glm::vec3(1, 0.412f, 0.38f),
+                                    true
+    );
+
+    squareForMenuBar = object2D::CreateSquare("square_for_scene",
+                                    glm::vec3(0, 0, 0),
+                                    120,
+                                    glm::vec3(0.62f, 0.62f, 0.62f),
+                                    false
+    );
+
+    heroesForMenuBar.push_back(new Hero("attacker1", glm::vec3(30, 570, 0.2), glm::vec3(0.259f, 0.839f, 0.643f)));
+    heroesForMenuBar.push_back(new Hero("attacker2", glm::vec3(30, 570, 0.2), glm::vec3(0.973f, 0.953f, 0.553f)));
+    heroesForMenuBar.push_back(new Hero("attacker3", glm::vec3(30, 570, 0.2), glm::vec3(1, 0.706f, 0.502f)));
+    heroesForMenuBar.push_back(new Hero("attacker4", glm::vec3(30, 570, 0.2), glm::vec3(0.78f, 0.502f, 0.91f)));
+
+    starForPrice = new Star("attacker1", glm::vec3(30, 570, 0.2), glm::vec3(0.61f, 0.61f, 0.61f));
+
+     star= new Star("star", glm::vec3(500, 500, 0), glm::vec3(0.61f, 0.61f, 0.61f));
+     star->setScale(1.4f);
+     star->translateToCurr();
+
+     heart = new Heart("heart", glm::vec3(500, 500, 0), glm::vec3(1, 0, 0));
+    heart->setScale(4.8f);
+    heart->translateToCurr();
+
 }
 
 
@@ -73,19 +117,8 @@ void Tema1::FrameStart()
 void Tema1::Update(float deltaTimeSeconds)
 {
     renderScene();
-//
-//    RenderMesh2D(attacker->getMesh(), shaders["VertexColor"], attacker->getModelMatrix());
-//    RenderMesh2D(star->mesh, shaders["VertexColor"], star->modelMatrix);
-//
-//    glm::vec3 newPos = glm::vec3(enemy->position);
-//    newPos.x += 100 * deltaTimeSeconds;
-//    enemy->setPosition(newPos);
-//    renderEnemy(enemy);
 
     /*Draw the hearts*/
-    Heart* heart = new Heart("heart", glm::vec3(500, 500, 0), glm::vec3(1, 0, 0));
-    heart->setScale(4.8f);
-    heart->translateToCurr();
     for (int i = 0; i < nrOfLives; ++i) {
         glm::vec3 pos = glm::vec3(660 + i * 100, 670, 0);
         heart->setPosition(pos);
@@ -93,23 +126,20 @@ void Tema1::Update(float deltaTimeSeconds)
     }
 
     /*Draw the stars*/
-    Star* star= new Star("star", glm::vec3(500, 500, 0), glm::vec3(0.61f, 0.61f, 0.61f));
-    star->setScale(1.4f);
-    star->translateToCurr();
     for (int i = 0; i < nrOfStars; ++i) {
         glm::vec3 pos = glm::vec3(640 + i * 50, 580, 0);
         star->setPosition(pos);
         RenderMesh2D(star->getMesh(), shaders["VertexColor"], star->getModelMatrix());
     }
 
-    //Print the newHero which is created but not placed yet
+    /* Print the newHero which is created but not placed yet */
     if (newHero != nullptr) {
         newHero->setPosition(glm::vec3(my_mouseX, my_mouseY, 0));
         newHero->translateToCurr();
         RenderMesh2D(newHero->getMesh(), shaders["VertexColor"], newHero->getModelMatrix());
     }
 
-    //Draw all the heroes from the table
+    /* Draw all the heroes from the table */
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
             if (heroesMatrix[i][j] != nullptr) {
@@ -117,6 +147,62 @@ void Tema1::Update(float deltaTimeSeconds)
             }
         }
     }
+
+    /* Draw all the spawned stars */
+    for (int i = 0; i < spawnedStars.size(); i++) {
+        RenderMesh2D(spawnedStars[i]->getMesh(), shaders["VertexColor"], spawnedStars[i]->getModelMatrix());
+    }
+
+    /*Draw all enemies*/
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < spawnedEnemies[i].size(); j++) {
+           Enemy* enemy = spawnedEnemies[i][j];
+           glm::vec3 pos = glm::vec3(enemy->position);
+           pos.x -= 45 * deltaTimeSeconds;
+           enemy->setPosition(pos);
+           renderEnemy(enemy);
+        }
+    }
+
+    /* Spawn new stars at a random interval of time */
+    starSpawnTime -= deltaTimeSeconds;
+    if(starSpawnTime <= 0)
+    {
+        /*Create new random coordinates*/
+        float newX = getRandomFloatInRange(500, 1250);
+        float newY = getRandomFloatInRange(0, 570);
+        /* Create a star with random coordinates and add it to the stars vector */
+        Star* newStar = new Star("new_star", glm::vec3(newX, newY, 0), glm::vec3(0.616f, 0.58f, 1));
+        newStar->setScale(2);
+        newStar->translateToCurr();
+
+        spawnedStars.push_back(newStar);
+        /*Reset the new star Spawn time*/
+        starSpawnTime = getRandomFloatInRange(MinStarSpawnTime, MaxStarSpawnTime);
+//        cout << "New star spawn time is: " << starSpawnTime << endl;
+    }
+
+    enemySpawnTime -= deltaTimeSeconds;
+    if(enemySpawnTime <= 0)
+    {
+        /*Create new random coordinates*/
+        int row = getRandomIntInRange(0, 2);
+        cout << "row" << row << endl;
+        int type = getRandomIntInRange(0,3);
+        float x = 1200;
+        float y = 100 + row * 150;
+        /* Create a star with random coordinates and add it to the stars vector */
+        Enemy* newEnemy = new Enemy("enemy", glm::vec3(x, y, 0), type);
+
+        spawnedEnemies[row].push_back(newEnemy);
+        /*Reset the new star Spawn time*/
+        enemySpawnTime= getRandomFloatInRange(MinEnemySpawnTime, MaxEnemySpawnTime);
+    }
+//    glm::vec3 newPos = enemy->position;
+//    newPos.x += 30 * deltaTimeSeconds;
+//    enemy->setPosition(newPos);
+//    renderEnemy(enemy);
+
 
 }
 
@@ -140,6 +226,9 @@ void Tema1::OnInputUpdate(float deltaTime, int mods)
 void Tema1::OnKeyPress(int key, int mods)
 {
     // Add key press event
+    if (key == GLFW_KEY_V) {
+        cout << "random number in range: " << getRandomFloatInRange(1, 3) << endl;
+    }
 }
 
 
@@ -153,14 +242,6 @@ void Tema1::OnMouseMove(int mouseX, int mouseY, int deltaX, int deltaY)
 {
     my_mouseX= mouseX;
     my_mouseY=  720 - mouseY;
-    // Add mouse move event
-//    if(buingNow == 1 ) {
-//        cout << "am intrat in al doilea if" << endl;
-//       newHero->setPosition(glm::vec3(mouseX, 50, 0));
-//       newHero->translateToCurr();
-//        RenderMesh2D(newHero->getMesh(), shaders["VertexColor"], newHero->getModelMatrix());
-//    }
-
 }
 
 
@@ -169,17 +250,38 @@ void Tema1::OnMouseBtnPress(int mouseX, int mouseY, int button, int mods)
     my_mouseX = mouseX;
     my_mouseY =  720 - mouseY;
 
+    /* Detect if we want to buy a new hero */
     if (buingNow == 0 && button == 1) {
         int x = 30, y = 570;
         for (int i = 0; i < 4; ++i) {
             int square_x = x + 150 * i;
-            if (my_mouseX >= square_x && my_mouseX <= square_x + 120
-                    && my_mouseY >= y && my_mouseY <= y + 120) {
+            //check if mouse click is in the range of the i-th square and we have enough stars
+            if (my_mouseX >= square_x && my_mouseX <= square_x + 120 &&
+                     my_mouseY >= y && my_mouseY <= y + 120 &&
+                     getNrOfStars() >= i + 1) {
                 cout << "new hero should be of type " << i << endl;
                 newHero = new Hero("new_hero", glm::vec3(my_mouseX, my_mouseY, 0), i);
                 buingNow = 1;
             }
 
+        }
+    }
+    /*Detect if we want to collect a star*/
+    if (button == 1) {
+
+        for (int i = 0; i < spawnedStars.size(); i++) {
+            Star* star = spawnedStars[i];
+            glm::vec3 starCenter = star->getCenter();
+            glm::vec3 starPos = star->getPosition();
+            if (i == 0) {
+                cout <<"radius: " << star->getRadius() << endl;
+                cout <<"distance: " << glm::distance(glm::vec3(my_mouseX,my_mouseY,0),starPos) << endl;
+            }
+            if (glm::distance(glm::vec3(my_mouseX + 2 ,my_mouseY + 2,0),starPos) < star->getRadius()) {
+//                cout << "clicked on the star " << i << endl;
+                nrOfStars++;
+                spawnedStars.erase(spawnedStars.begin() + i);
+            }
         }
     }
 
@@ -189,10 +291,9 @@ void Tema1::OnMouseBtnPress(int mouseX, int mouseY, int button, int mods)
 void Tema1::OnMouseBtnRelease(int mouseX, int mouseY, int button, int mods)
 {
     // Add mouse button release event
-    if (button == 1) {
+    if (button == 1 && buingNow == 1) {
         int heroPlaced = 0;
-        cout << "button release" << endl;
-        //here we will check if the new hero is situated on a square
+        //check if the new hero is situated on a square
         int x = 70, y = 40;
         for(int i = 0; i < 3; i++) {
             x = 70;
@@ -201,18 +302,22 @@ void Tema1::OnMouseBtnRelease(int mouseX, int mouseY, int button, int mods)
                 if (mouseX >= x && mouseX <= x + 120 && (720 - mouseY) >= y && (720 - mouseY) <= y + 120) {
                     //check if our square is free
                     if (heroesMatrix[i][j] == nullptr) {
-                       heroesMatrix[i][j] = newHero;
-                       newHero->setPosition(glm::vec3(x + 120 / 2, y + 120 / 2, 0));
-                       newHero->translateToCurr();
-                       heroPlaced = 1;
-
+                        //place hero on a square
+                        heroesMatrix[i][j] = newHero;
+                        //set the position of the hero in the middle of the selected square
+                        newHero->setPosition(glm::vec3(x + 120 / 2, y + 120 / 2, 0));
+                        newHero->translateToCurr();
+                        //toggle hero placed to not delete the newHero
+                        heroPlaced = 1;
+                        //Spend the amount of stars needed
+                        setNrOfStars(getNrOfStars() - (newHero->getType() + 1));
                     }
               }
                x += 150;
             }
             y += 150;
         }
-        //if not on a square then
+        //if the hero is not placed on a square we will delete it;
         if (!heroPlaced) {
             delete newHero;
         }
@@ -231,14 +336,43 @@ void Tema1::OnWindowResize(int width, int height)
 {
 }
 
+void Tema1::setNrOfStars(int nrOfStars) {
+    this->nrOfStars = nrOfStars;
+}
+int Tema1::getNrOfStars() {
+    return this->nrOfStars;
+}
+
 /*Renders the enemy itself, with a smaller enemy inside of it*/
 void Tema1::renderEnemy(Enemy* enemy1) {
-    Enemy* secondaryEnemy = new Enemy("Ceburek1232",  enemy1->position, glm::vec3(1,0.5,1));
-    secondaryEnemy->scale = enemy1->scale * 0.7;
-    secondaryEnemy->translateToCurr();
-
-    RenderMesh2D(secondaryEnemy->mesh1, shaders["VertexColor"], secondaryEnemy->modelMatrix);
+//    glm::vec3 color = enemy1->color;
+//    color.x -= 0.3f;
+//    color.y -= 0.3f;
+//    color.z -= 0.3f;
+//    Enemy* secondaryEnemy = new Enemy("Ceburek1232",  enemy1->position, color);
+//    secondaryEnemy->scale = enemy1->scale * 0.7;
+//    secondaryEnemy->translateToCurr();
+//
+//    RenderMesh2D(secondaryEnemy->mesh1, shaders["VertexColor"], secondaryEnemy->modelMatrix);
+//    RenderMesh2D(enemy1->mesh1, shaders["VertexColor"], enemy1->modelMatrix);
+    glm::vec3 secondPos = glm::vec3(enemy1->position);
+    //translate
+    glm::mat3 modelMatrix = glm::mat3(1);
+    modelMatrix *= transform2D::Translate(enemy1->position.x,   enemy1->position.y);
+    //scale
+    modelMatrix *= transform2D::Translate(enemy1->center.x  , enemy1->center.y );
+    modelMatrix *= transform2D::Scale(enemy1->scale * 0.8f, enemy1->scale * 0.8f);
+    modelMatrix *= transform2D::Translate(- enemy1->center.x ,  -enemy1->center.y );
+    RenderMesh2D(enemy1->mesh2, shaders["VertexColor"], modelMatrix);
     RenderMesh2D(enemy1->mesh1, shaders["VertexColor"], enemy1->modelMatrix);
+}
+
+float Tema1::getRandomFloatInRange(float min, float max) {
+
+    return min + static_cast <float> (rand()) /( static_cast <float> (RAND_MAX/(max - min)));
+}
+int Tema1::getRandomIntInRange(int min, int max) {
+    return min + std::rand() % (max - min + 1);
 }
 
 void Tema1::renderScene() {
@@ -247,20 +381,13 @@ void Tema1::renderScene() {
     float length = 120;
 
     /*Draw the 9 squares*/
-    Mesh* square = object2D::CreateSquare("square_for_scene",
-                                          glm::vec3(0, 0, 0),
-                                          length,
-                                          glm::vec3(0.031f, 0.792f, 0.82f),
-                                          true
-                                          );
-
     translateX = 70;
     translateY = paddingBottom;
     for (int i = 0; i < 3; ++i) {
         for (int j = 0; j < 3; ++j) {
             glm::mat3 modelMatrix = glm::mat3(1);
             modelMatrix *= transform2D::Translate(translateX, translateY);
-            RenderMesh2D(square, shaders["VertexColor"], modelMatrix);
+            RenderMesh2D(squareForScene, shaders["VertexColor"], modelMatrix);
             translateX += 150;
         }
         translateX = 70;
@@ -271,63 +398,39 @@ void Tema1::renderScene() {
     translateX = 20;
     translateY = paddingBottom;
     length = 25;
-    square = object2D::CreateSquare("square_for_scene",
-                                          glm::vec3(0, 0, 0),
-                                          length,
-                                          glm::vec3(1, 0.412f, 0.38f),
-                                          true
-    );
     glm::mat3 modelMatrix = glm::mat3(1);
     modelMatrix *= transform2D::Translate(15, paddingBottom);
     modelMatrix *= transform2D::Scale(1.5f , 16.8f);
-    RenderMesh2D(square, shaders["VertexColor"], modelMatrix);
+    RenderMesh2D(squareForFinish, shaders["VertexColor"], modelMatrix);
 
     /*Draw top menu bar*/
     length = 120;
-    square = object2D::CreateSquare("square_for_scene",
-                                          glm::vec3(0, 0, 0),
-                                          length,
-                                          glm::vec3(0.62f, 0.62f, 0.62f),
-                                          false
-    );
 
     /*Draw buy section*/
     translateX = 30;
     translateY = 570;
-    Star* star = new Star("attacker1", glm::vec3(30, 570, 0.2), glm::vec3(0.61f, 0.61f, 0.61f));
-    star->setScale(0.8f);
-    vector<Hero*> heroes;
-    Hero* hero = new Hero("attacker1", glm::vec3(30, 570, 0.2), glm::vec3(0.259f, 0.839f, 0.643f));
-    heroes.push_back(hero);
-    hero = new Hero("attacker2", glm::vec3(30, 570, 0.2), glm::vec3(0.973f, 0.953f, 0.553f));
-    heroes.push_back(hero);
-    hero = new Hero("attacker3", glm::vec3(30, 570, 0.2), glm::vec3(1, 0.706f, 0.502f));
-    heroes.push_back(hero);
-    hero = new Hero("attacker4", glm::vec3(30, 570, 0.2), glm::vec3(0.78f, 0.502f, 0.91f));
-    heroes.push_back(hero);
 
     for(int i = 0; i < 4; ++i) {
         //Add square
         modelMatrix = glm::mat3(1);
         modelMatrix *= transform2D::Translate(translateX, translateY);
-        RenderMesh2D(square, shaders["VertexColor"], modelMatrix);
+        RenderMesh2D(squareForMenuBar, shaders["VertexColor"], modelMatrix);
         modelMatrix = glm::mat3(1);
         modelMatrix *= transform2D::Translate(translateX + length / 2, translateY + length / 2);
 
         /*Draw heroes*/
         glm::vec3 newPos = glm::vec3(translateX + length / 2, translateY + length / 2, 0);
-        heroes[i]->setPosition(newPos);
-        heroes[i]->setScale(0.8f);
-        heroes[i]->translateToCurr();
-        RenderMesh2D(heroes[i]->getMesh(), shaders["VertexColor"], heroes[i]->getModelMatrix());
+        heroesForMenuBar[i]->setPosition(newPos);
+        heroesForMenuBar[i]->translateToCurr();
+        RenderMesh2D(heroesForMenuBar[i]->getMesh(), shaders["VertexColor"], heroesForMenuBar[i]->getModelMatrix());
 
         /*Draw price of each hero*/
         float posX = 38 + i * 150;
         float posY = 550;
         for (int j = 0; j < i + 1; j++) {
             glm::vec3 pos = glm::vec3(posX + j * 30, posY, 0);
-            star->setPosition(pos);
-            RenderMesh2D(star->getMesh(), shaders["VertexColor"], star->getModelMatrix());
+            starForPrice->setPosition(pos);
+            RenderMesh2D(starForPrice->getMesh(), shaders["VertexColor"], starForPrice->getModelMatrix());
         }
         translateX += 150;
     }
