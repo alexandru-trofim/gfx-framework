@@ -30,7 +30,10 @@ public:
     glm::vec3 color;
     glm::vec3 position;
     float scale;
+    float radius;
+    int lives;
     int type;
+    int killedState;
 
     void translateToCurr();
 
@@ -41,6 +44,8 @@ public:
     void render(Shader *shader);
 
     void setColorFromType();
+
+    void changeNewScale(float new_scale);
 };
 
 

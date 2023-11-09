@@ -33,6 +33,7 @@ int Hero::getType() {
 /*Setters*/
 float Hero::setScale(float new_scale) {
     scale = new_scale * scale;
+    radius = new_scale * radius;
     translateToCurr();
 }
 glm::vec3 Hero::setPosition(glm::vec3 new_position) {
@@ -43,6 +44,8 @@ glm::vec3 Hero::setPosition(glm::vec3 new_position) {
 
 Hero::Hero(std::string name, glm::vec3 position, glm::vec3 color) {
     scale = 65;
+    projectileSpawnTime = 3;
+    killedState = 0;
     this->position = position;
     this->color = color;
 
@@ -76,11 +79,16 @@ Hero::Hero(std::string name, glm::vec3 position, glm::vec3 color) {
     }
     center /= static_cast<float>(vertices.size());
 
+    radius = glm::distance(center,glm::vec3(2.8f, 1.7f, 1) * scale);
+
     this->translateToCurr();
 }
 
-Hero::Hero(std::string name, glm::vec3 position, int type) {
+Hero::Hero(std::string name, glm::vec3 position, int type, int row) {
     scale = 65;
+    projectileSpawnTime = 3;
+    killedState = 0;
+    this->row = row;
     this->position = position;
     this->type = type;
     /*Here is the difference from the previous constructor*/

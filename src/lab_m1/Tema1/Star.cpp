@@ -11,6 +11,10 @@ float Star::setScale(float new_scale) {
     radius = new_scale * radius;
     translateToCurr();
 }
+float Star::setRotation(float new_rotation) {
+    rotation = rotation + new_rotation;
+    translateToCurr();
+}
 glm::vec3 Star::setPosition(glm::vec3 new_position) {
     position = glm::vec3(new_position);
     translateToCurr();
@@ -18,6 +22,8 @@ glm::vec3 Star::setPosition(glm::vec3 new_position) {
 
 Star::Star(std::string name, glm::vec3 position, glm::vec3 color) {
     scale = 10;
+    rotation = 0;
+    killedState = 0;
     this->position = position;
     this->color = color;
 
@@ -26,16 +32,16 @@ Star::Star(std::string name, glm::vec3 position, glm::vec3 color) {
 
     std::vector<VertexFormat> vertices =
             {
-                    VertexFormat(glm::vec3(5, 4, 0), color),
-                    VertexFormat(glm::vec3(4.475f, 2.903f, 0), color),
-                    VertexFormat(glm::vec3(3.3f, 2.75f, 0), color),
-                    VertexFormat(glm::vec3(4.15f, 1.91f, 0), color),
-                    VertexFormat(glm::vec3(3.92f, 0.77f, 0), color),
-                    VertexFormat(glm::vec3(4.96f, 1.27f, 0), color),
-                    VertexFormat(glm::vec3(5.96f, 0.7f, 0), color),
-                    VertexFormat(glm::vec3(5.8f, 1.86f, 0), color),
-                    VertexFormat(glm::vec3(6.67f, 2.68f, 0), color),
-                    VertexFormat(glm::vec3(5.51f, 2.85f, 0), color),
+                    VertexFormat(glm::vec3(5, 4, 1.1f), color),
+                VertexFormat(glm::vec3(4.475f, 2.903f, 1.1f), color),
+                    VertexFormat(glm::vec3(3.3f, 2.75f, 1.1f), color),
+                    VertexFormat(glm::vec3(4.15f, 1.91f, 1.1f), color),
+                    VertexFormat(glm::vec3(3.92f, 0.77f, 1.1f), color),
+                    VertexFormat(glm::vec3(4.96f, 1.27f, 1.1f), color),
+                    VertexFormat(glm::vec3(5.96f, 0.7f, 1.1f), color),
+                    VertexFormat(glm::vec3(5.8f, 1.86f, 1.1f), color),
+                    VertexFormat(glm::vec3(6.67f, 2.68f, 1.1f), color),
+                    VertexFormat(glm::vec3(5.51f, 2.85f, 1.1f), color),
             };
     std::vector<unsigned int> indices = {
             0, 1, 9,
@@ -64,6 +70,8 @@ Star::Star(std::string name, glm::vec3 position, glm::vec3 color) {
 
 Star::Star(std::string name, glm::vec3 position, int type) {
     scale = 10;
+    killedState = 0;
+    rotation = 0;
     this->position = position;
     this->type = type;
     setColorFromType();
@@ -118,6 +126,10 @@ void Star::translateToCurr() {
     modelMatrix *= transform2D::Translate(center.x  ,center.y );
     modelMatrix *= transform2D::Scale(scale, scale);
     modelMatrix *= transform2D::Translate(- center.x ,  - center.y );
+    //rotate
+    modelMatrix *= transform2D::Translate(center.x  ,center.y );
+    modelMatrix *= transform2D::Rotate(rotation);
+    modelMatrix *= transform2D::Translate(- center.x ,  - center.y );
 }
 
 Mesh* Star::getMesh() {
@@ -152,4 +164,8 @@ void Star::setColorFromType() {
         default:
             break;
     }
+}
+
+Star::~Star() {
+
 }

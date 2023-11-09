@@ -24,6 +24,7 @@ public:
     Mesh* mesh;
     glm::mat3 modelMatrix;
     int type;
+    int killedState;
     glm::vec3 setPosition(glm::vec3 new_position);
     Mesh *getMesh();
     void translateToCurr();
@@ -38,16 +39,19 @@ public:
 
     glm::vec3 getPosition();
 
+    float setRotation(float new_rotation);
+
 private:
     glm::vec3 center;
     glm::vec3 color;
     glm::vec3 position;
     float radius;
     float scale;
-    int type;
+    float rotation;
 
 
     void setColorFromType();
+
 };
 
 

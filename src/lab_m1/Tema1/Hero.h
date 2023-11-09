@@ -12,7 +12,7 @@ class Hero {
 public:
     Hero();
     Hero(std::string name, glm::vec3 position, glm::vec3 color);
-    Hero(std::string name, glm::vec3 position, int type);
+    Hero(std::string name, glm::vec3 position, int type, int row);
     ~Hero();
 
     void translateToCurr();
@@ -28,12 +28,17 @@ public:
 
     int getType();
 
+    float projectileSpawnTime;
+    int row;
+
+    float radius;
+    int killedState;
+    float scale;
 private:
     Mesh* mesh;
     glm::mat3 modelMatrix;
     glm::vec3 center;
     glm::vec3 position;
-    float scale;
     int type;
 
 protected:

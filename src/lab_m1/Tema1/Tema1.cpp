@@ -116,7 +116,7 @@ void Tema1::FrameStart()
 
 void Tema1::Update(float deltaTimeSeconds)
 {
-    renderScene();
+//    renderScene();
 
     /*Draw the hearts*/
     for (int i = 0; i < nrOfLives; ++i) {
@@ -143,6 +143,16 @@ void Tema1::Update(float deltaTimeSeconds)
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
             if (heroesMatrix[i][j] != nullptr) {
+                if (heroesMatrix[i][j]->killedState == 1) {
+                    if (heroesMatrix[i][j]->scale - 35 * deltaTimeSeconds  > 35 * deltaTimeSeconds) {
+                        heroesMatrix[i][j]->scale -= 35 * deltaTimeSeconds;
+                    } else {
+                        delete heroesMatrix[i][j];
+                        heroesMatrix[i][j] = nullptr;
+                        continue;
+                    }
+                    heroesMatrix[i][j]->translateToCurr();
+                }
                 RenderMesh2D(heroesMatrix[i][j]->getMesh(), shaders["VertexColor"], heroesMatrix[i][j]->getModelMatrix());
             }
         }
@@ -159,8 +169,20 @@ void Tema1::Update(float deltaTimeSeconds)
            Enemy* enemy = spawnedEnemies[i][j];
            glm::vec3 pos = glm::vec3(enemy->position);
            pos.x -= 45 * deltaTimeSeconds;
+           if (spawnedEnemies[i][j]->killedState == 1) {
+                if (spawnedEnemies[i][j]->scale - 35 * deltaTimeSeconds  > 35 * deltaTimeSeconds) {
+                    spawnedEnemies[i][j]->scale -= 35 * deltaTimeSeconds;
+                } else {
+                    delete spawnedEnemies[i][j];
+                    spawnedEnemies[i].erase(spawnedEnemies[i].begin() + j);
+                    j--;
+                    continue;
+                }
+                spawnedEnemies[i][j]->translateToCurr();
+           }
            enemy->setPosition(pos);
            renderEnemy(enemy);
+
         }
     }
 
@@ -179,9 +201,9 @@ void Tema1::Update(float deltaTimeSeconds)
         spawnedStars.push_back(newStar);
         /*Reset the new star Spawn time*/
         starSpawnTime = getRandomFloatInRange(MinStarSpawnTime, MaxStarSpawnTime);
-//        cout << "New star spawn time is: " << starSpawnTime << endl;
     }
 
+    /* Spawn new enemies at a random interval of time */
     enemySpawnTime -= deltaTimeSeconds;
     if(enemySpawnTime <= 0)
     {
@@ -190,7 +212,7 @@ void Tema1::Update(float deltaTimeSeconds)
         cout << "row" << row << endl;
         int type = getRandomIntInRange(0,3);
         float x = 1200;
-        float y = 100 + row * 150;
+        float y = 100.0f + row * 150.0f;
         /* Create a star with random coordinates and add it to the stars vector */
         Enemy* newEnemy = new Enemy("enemy", glm::vec3(x, y, 0), type);
 
@@ -198,11 +220,99 @@ void Tema1::Update(float deltaTimeSeconds)
         /*Reset the new star Spawn time*/
         enemySpawnTime= getRandomFloatInRange(MinEnemySpawnTime, MaxEnemySpawnTime);
     }
-//    glm::vec3 newPos = enemy->position;
-//    newPos.x += 30 * deltaTimeSeconds;
-//    enemy->setPosition(newPos);
-//    renderEnemy(enemy);
 
+    /*Iterate through all to check what projectiles to launch*/
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            if (heroesMatrix[i][j] != nullptr) {
+                int isHeroShooting = false;
+                /*Check if the hero is Shooting*/
+                for(int k = 0; k < spawnedEnemies[i].size(); k++) {
+                    if (heroesMatrix[i][j]->getType() == spawnedEnemies[i][k]->type) {
+                        isHeroShooting = true;
+                        break;
+                    }
+                }
+                if (isHeroShooting) {
+                    heroesMatrix[i][j]->projectileSpawnTime -= deltaTimeSeconds;
+                    if (heroesMatrix[i][j]->projectileSpawnTime <= 0) {
+                        //Create new projectile
+                        glm::vec3 projectilePos = glm::vec3(heroesMatrix[i][j]->getPosition());
+                        projectilePos.x += 45;
+                        Star* newProjectile = new Star("projectile", projectilePos, heroesMatrix[i][j]->getType());
+                        newProjectile->setScale(1.5f);
+                        projectiles.push_back(newProjectile);
+                        heroesMatrix[i][j]->projectileSpawnTime = 5;
+                    }
+
+                }
+            }
+        }
+    }
+
+    /*Move all launched projectiles*/
+    for (int i = 0; i < projectiles.size(); i++) {
+        glm::vec3 newPos = glm::vec3(projectiles[i]->getPosition());
+        newPos.x += 170 * deltaTimeSeconds;
+        projectiles[i]->setPosition(newPos);
+        //add rotation here
+        projectiles[i]->setRotation(-RADIANS(1000) * deltaTimeSeconds);
+        RenderMesh2D(projectiles[i]->getMesh(), shaders["VertexColor"], projectiles[i]->getModelMatrix());
+    }
+
+    /* Detect collisions betweeen stars and enemies*/
+    for(int i = 0; i < 3; i++) {
+        for (int j = 0; j < spawnedEnemies[i].size(); j++) {
+            for (int k = 0; k < projectiles.size(); k++) {
+                float distance = glm::distance(projectiles[k]->getPosition(), spawnedEnemies[i][j]->position);
+                if (distance < projectiles[k]->getRadius() + spawnedEnemies[i][j]->radius &&
+                    projectiles[k]->type == spawnedEnemies[i][j]->type) {
+                    spawnedEnemies[i][j]->lives--;
+                    if (spawnedEnemies[i][j]->lives == 0) {
+                        spawnedEnemies[i][j]->killedState = 1;
+                    }
+                    /*Delete the star*/
+                    delete projectiles[k];
+                    projectiles.erase(projectiles.begin() + k);
+                    //???
+                    k--;
+                }
+            }
+        }
+    }
+
+    /* Detect collisions between enemies and heroes */
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            if (heroesMatrix[i][j] != nullptr) {
+                for (int k = 0; k < 3; k++) {
+                    for (int v = 0; v < spawnedEnemies[k].size(); v++) {
+                        float distance = glm::distance(heroesMatrix[i][j]->getPosition(), spawnedEnemies[k][v]->position);
+                        if (distance < heroesMatrix[i][j]->radius + spawnedEnemies[k][v]->radius + 80) {
+                            heroesMatrix[i][j]->killedState = 1;
+                        }
+                    }
+
+                }
+            }
+
+        }
+    }
+    for(int i = 0; i < 3; i++) {
+        for (int j = 0; j < spawnedEnemies[i].size(); j++) {
+            if (spawnedEnemies[i][j]->position.x < 30) {
+                nrOfLives--;
+                delete spawnedEnemies[i][j];
+                spawnedEnemies[i].erase(spawnedEnemies[i].begin() + j);
+            }
+        }
+    }
+
+
+
+
+    /*Moved it here because the stars were rendering behind the squares*/
+    renderScene();
 
 }
 
@@ -260,7 +370,7 @@ void Tema1::OnMouseBtnPress(int mouseX, int mouseY, int button, int mods)
                      my_mouseY >= y && my_mouseY <= y + 120 &&
                      getNrOfStars() >= i + 1) {
                 cout << "new hero should be of type " << i << endl;
-                newHero = new Hero("new_hero", glm::vec3(my_mouseX, my_mouseY, 0), i);
+                newHero = new Hero("new_hero", glm::vec3(my_mouseX, my_mouseY, 0), i, 0);
                 buingNow = 1;
             }
 
@@ -282,6 +392,23 @@ void Tema1::OnMouseBtnPress(int mouseX, int mouseY, int button, int mods)
                 nrOfStars++;
                 spawnedStars.erase(spawnedStars.begin() + i);
             }
+        }
+    }
+    if (button == 2) {
+        int x = 70, y = 40;
+        for(int i = 0; i < 3; i++) {
+            x = 70;
+            for (int j = 0; j < 3; j++) {
+                //Check if our mouse is within the range o a square
+                if (mouseX >= x && mouseX <= x + 120 && (720 - mouseY) >= y && (720 - mouseY) <= y + 120) {
+                    //check if our square is free
+                    if (heroesMatrix[i][j] != nullptr) {
+                       heroesMatrix[i][j]->killedState = 1;
+                    }
+                }
+                x += 150;
+            }
+            y += 150;
         }
     }
 
@@ -307,6 +434,8 @@ void Tema1::OnMouseBtnRelease(int mouseX, int mouseY, int button, int mods)
                         //set the position of the hero in the middle of the selected square
                         newHero->setPosition(glm::vec3(x + 120 / 2, y + 120 / 2, 0));
                         newHero->translateToCurr();
+                        //Set the row of the newHero
+                        newHero->row = i;
                         //toggle hero placed to not delete the newHero
                         heroPlaced = 1;
                         //Spend the amount of stars needed

@@ -50,9 +50,11 @@ namespace m1
         float MaxEnemySpawnTime = 0;
 
         Hero* heroesMatrix[3][3];
-        Hero* newHero;
         std::vector<Star*> spawnedStars;
         std::vector<Enemy*> spawnedEnemies[3];
+        std::vector<Star*> projectiles;
+
+        Hero* newHero;
         Star* starForPrice;
         Mesh* squareForScene;
         Mesh* squareForFinish;

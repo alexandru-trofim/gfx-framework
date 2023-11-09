@@ -10,6 +10,7 @@
 /*Setters*/
 void Enemy::setScale(float new_scale) {
     scale = new_scale;
+//    radius = new_scale * radius;
     translateToCurr();
 }
 void Enemy::setPosition(glm::vec3 new_position) {
@@ -19,6 +20,8 @@ void Enemy::setPosition(glm::vec3 new_position) {
 
 Enemy::Enemy(std::string name, glm::vec3 position, glm::vec3 color) {
     scale = 25;
+    killedState = 0;
+    lives = 3;
     this->position = position;
     this->color = color;
     glm::vec3 secondaryColor = glm::vec3(1, 0, 1);
@@ -51,11 +54,14 @@ Enemy::Enemy(std::string name, glm::vec3 position, glm::vec3 color) {
     }
     center /= static_cast<float>(vertices1.size());
 
+    radius = glm::distance(center,glm::vec3(2.55f, 4.39f, 0) * scale);
     this->translateToCurr();
 }
 
 Enemy::Enemy(std::string name, glm::vec3 position,int type) {
     scale = 25;
+    killedState = 0;
+    lives = 3;
     this->position = position;
     this->type = type;
     setColorFromType();
@@ -108,16 +114,12 @@ Enemy::Enemy(std::string name, glm::vec3 position,int type) {
     }
     center /= static_cast<float>(vertices1.size());
 
+    radius = glm::distance(center,glm::vec3(1.24f, 2.73f, 1) * (scale / 2));
+
     this->translateToCurr();
 }
 void Enemy::translateToCurr() {
     modelMatrix = glm::mat3(1);
-//    //scale
-//    modelMatrix *= transform2D::Translate(center.x +  position.x ,center.y + position.y);
-//    modelMatrix *= transform2D::Scale(scale, scale);
-//    modelMatrix *= transform2D::Translate(- center.x - position.x,  - center.y - position.y);
-//    //translate
-//    modelMatrix *= transform2D::Translate(position.x,   position.y);
     //translate
     modelMatrix *= transform2D::Translate(position.x,   position.y);
     //scale
@@ -144,4 +146,8 @@ void Enemy::setColorFromType() {
         default:
             break;
     }
+}
+
+Enemy::~Enemy() {
+
 }
